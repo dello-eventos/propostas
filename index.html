@@ -8,9 +8,13 @@
 <link rel="canonical" href="https://henriquegambin.github.io/propostas/">
 <script>
   // O sistema de propostas mudou para https://henriquegambin.github.io/propostas/
-  // Mantém o resto do endereço (?demo, #/proposta/...) e tira o app antigo deste endereço.
-  if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(rs => rs.forEach(r => r.unregister())).catch(() => {});
-  location.replace('https://henriquegambin.github.io/propostas/' + location.search + location.hash);
+  // Remove só o service worker antigo das propostas (nunca o de outro app deste endereço).
+  if ('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations()
+    .then(rs => rs.filter(r => r.scope.indexOf('/propostas/') !== -1).forEach(r => r.unregister())).catch(() => {});
+  // Aberto dentro da janela do app Dello · Gestão de Eventos: volta para o próprio app de eventos.
+  // Aberto no navegador: segue para o novo endereço, mantendo ?demo e #/proposta/...
+  var dentroDoApp = ['standalone', 'minimal-ui', 'window-controls-overlay'].some(function (m) { return matchMedia('(display-mode: ' + m + ')').matches; }) || navigator.standalone === true;
+  location.replace(dentroDoApp ? '/' : 'https://henriquegambin.github.io/propostas/' + location.search + location.hash);
 </script>
 <style>body{margin:0;min-height:100vh;display:grid;place-items:center;font:15px/1.5 system-ui,sans-serif;background:#F1F5F9;color:#0B1A2B;text-align:center;padding:20px}a{color:#0047A7;font-weight:600}</style>
 </head>
